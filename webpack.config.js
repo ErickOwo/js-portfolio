@@ -1,9 +1,9 @@
 const path = require("path");
-const htmlWebpackPlugin = require("html-webpack-plugin");
-const miniCssWebpackPlugin = require("mini-css-extract-plugin");
-const cssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const terserPlugin = require("terser-webpack-plugin");
-const dotEnv = require("dotenv-webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssWebpackPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
+const DotEnv = require("dotenv-webpack");
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname,"dist"),
         filename: "[name].[contenthash].js",
-        assetModuleFilename: "assets/images/[hash][ext][query]"
+        assetModuleFilename:  "assets/images/[hash][ext][query]"
     },
     resolve: {
         extensions: ["js"],
@@ -33,7 +33,7 @@ module.exports = {
             },
             {
                 test: /\.(css|styl)$/i,
-                use: [miniCssWebpackPlugin.loader, "css-loader", "stylus-loader"]
+                use: [MiniCssWebpackPlugin.loader, "css-loader", "stylus-loader"]
             },
             {
                 test: /\.png$/,
@@ -41,37 +41,30 @@ module.exports = {
             },
             {
                 test: /\.(woff|woff2)$/,
-                use: {
-                    loader: "url-loader",
-                    options: {
-                        limit: 10000,
-                        mimetype: "application/font-woff",
-                        name: "[name].[contenthash].[ext]",
-                        outputPath: "./assets/fonts/",
-                        publicPath: "../assets/fonts/",
-                        esModule: false
-                    }
+                type: "asset/resource",
+                generator: {
+                    filename: "assets/fonts/[hash][ext]"
                 }
             }
         ]
     },
     plugins: [
-        new htmlWebpackPlugin({
+        new HtmlWebpackPlugin({
             inject: true,
             template: "./public/index.html",
             filename: "./index.html"
         }),
-        new miniCssWebpackPlugin({
+        new MiniCssWebpackPlugin({
             filename: "assets/[name].[contenthash].css"
         }),
-        new dotEnv(),
+        new DotEnv(),
         new CleanWebpackPlugin()
     ],
     optimization: {
         minimize: true,
         minimizer: [
-            new cssMinimizerPlugin(),
-            new terserPlugin()
+            new CssMinimizerPlugin(),
+            new TerserPlugin()
         ]
     }
 }

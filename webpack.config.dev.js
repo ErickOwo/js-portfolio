@@ -1,17 +1,17 @@
 const path = require("path");
-const htmlWebpackPlugin = require("html-webpack-plugin");
-const miniCssWebpackPlugin = require("mini-css-extract-plugin");
-const copyPlugin = require("copy-webpack-plugin");
-const dotEnv = require("dotenv-webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssWebpackPlugin = require("mini-css-extract-plugin");
+const DotEnv = require("dotenv-webpack");
 
 module.exports = {
     entry: "./src/index.js",
     output: {
         path: path.resolve(__dirname,"dist"),
         filename: "[name].[contenthash].js",
-        assetModuleFilename: "assets/images/[hash][ext][query]"
+        assetModuleFilename:  "assets/images/[hash][ext][query]"
     },
     mode: "development",
+    watch: true,
     resolve: {
         extensions: ["js"],
         alias: {
@@ -32,7 +32,7 @@ module.exports = {
             },
             {
                 test: /\.(css|styl)$/i,
-                use: [miniCssWebpackPlugin.loader, "css-loader", "stylus-loader"]
+                use: [MiniCssWebpackPlugin.loader, "css-loader", "stylus-loader"]
             },
             {
                 test: /\.png$/,
@@ -40,37 +40,22 @@ module.exports = {
             },
             {
                 test: /\.(woff|woff2)$/,
-                use: {
-                    loader: "url-loader",
-                    options: {
-                        limit: 10000,
-                        mimetype: "application/font-woff",
-                        name: "[name].[contenthash].[ext]",
-                        outputPath: "./assets/fonts/",
-                        publicPath: "../assets/fonts/",
-                        esModule: false
-                    }
+                type: "asset/resource",
+                generator: {
+                    filename: "assets/fonts/[hash][ext]"
                 }
             }
         ]
     },
     plugins: [
-        new htmlWebpackPlugin({
+        new HtmlWebpackPlugin({
             inject: true,
             template: "./public/index.html",
             filename: "./index.html"
         }),
-        new miniCssWebpackPlugin({
+        new MiniCssWebpackPlugin({
             filename: "assets/[name].[contenthash].css"
         }),
-        new copyPlugin({
-            patterns: [
-                {
-                    from: path.resolve(__dirname,"src","assets/images"),
-                    to: "assets/images"
-                }
-            ]
-        }),
-        new dotEnv()
+        new DotEnv()
     ]
 }
