@@ -1,8 +1,9 @@
-import Template from '@templates/Template.js';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+const container = document.getElementById('main');
+const root = createRoot(container);
+import Template from '@templates/Template';
 import "@styles/main.css"
 import "@styles/vars.styl"
 
-(async function App() {
-  const main = null || document.getElementById('main');
-  main.innerHTML = await Template();
-})();
+root.render(<Template/>);
